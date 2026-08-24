@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Revisão da 1ª AAIM · 6º ano · 3º bimestre · V02.00</title>
+<style>
+:root{
+  --verde:#5FBFAA; --verde-esc:#2E8C7A; --roxo:#7B2D8E; --roxo-esc:#5A1F69;
+  --creme:#F2F7F5; --tinta:#17242B; --cinza:#6B7C85; --borda:#D3DEDB;
+  --ok:#26890C; --erro:#E21B3C; --alerta:#D89E00; --conv:#8E2B2B; --convbg:#FBECEC;
+  --destaque:#FFF3CD;
+  --b1:#2E5C8A; --b2:#4A8C3F; --b3:#F0C419; --b4:#E07B2C; --b5:#D32F2F;
+  --sc-ctrl:#FFAB19; --sc-sens:#5CB1D6; --sc-op:#59C059; --sc-look:#9966FF; --sc-evt:#FFBF00;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;font-size:18px;line-height:1.6;
+  color:var(--tinta);background:linear-gradient(135deg,#7B2D8E,#5A1F69 40%,#2E8C7A);min-height:100vh}
+.wrap{max-width:1080px;margin:0 auto;padding:16px 14px 96px}
+.card{background:#fff;border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.28);padding:24px}
+h1,h2,h3{line-height:1.2}
+
+/* barra de status */
+#statusbar{position:sticky;top:0;z-index:60;background:rgba(23,36,43,.92);display:flex;flex-wrap:wrap;
+  gap:6px;padding:7px 10px;justify-content:center}
+#statusbar .chip{background:rgba(255,255,255,.14);color:#fff;font-size:14px;font-weight:700;
+  padding:3px 10px;border-radius:14px}
+#statusbar .chip.ver{background:#F0C419;color:#17242B}
+#statusbar .chip.tent{background:var(--roxo)}
+#statusbar .chip.sai{background:#3A4A52}
+
+/* trilha */
+#trilhabar{display:none;max-width:1080px;margin:10px auto 0;padding:0 14px}
+.telacont{color:#fff;font-size:14px;font-weight:700;text-align:center;margin-bottom:5px;opacity:.9}
+.trilha{display:flex;flex-wrap:wrap;gap:5px;justify-content:center}
+.mk{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.75)}
+.mk.ok{background:var(--ok);border-color:var(--ok)}
+.mk.tarde{background:var(--b4);border-color:var(--b4)}
+.mk.nao{background:var(--erro);border-color:var(--erro)}
+.mk.aqui{background:#F0C419;border-color:#F0C419;transform:scale(1.5);box-shadow:0 0 0 4px rgba(240,196,25,.35)}
+.mk.los{border-radius:3px;transform:rotate(45deg)}
+.mk.los.aqui{transform:rotate(45deg) scale(1.5)}
+.mk.kon{border-radius:3px;transform:rotate(45deg);background:#8E2B2B;border-color:#8E2B2B}
+.legtrilha{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:6px;color:#fff;font-size:13px}
+.legtrilha i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:4px;vertical-align:-1px}
+
+/* abertura */
+.abertura h1{font-size:29px;color:var(--roxo);margin-bottom:4px}
+.abertura h2{font-size:16px;color:var(--verde-esc);margin-bottom:14px}
+.campo{margin-bottom:14px}
+.campo label{display:block;font-size:16px;font-weight:800;color:var(--cinza);margin-bottom:5px}
+.campo input{width:100%;padding:11px 13px;font-size:16px;border:2px solid var(--borda);border-radius:11px;font-family:inherit}
+.campo input:focus{outline:none;border-color:var(--verde-esc)}
+.regras{background:var(--creme);border-left:5px solid var(--verde);border-radius:0 11px 11px 0;padding:14px 16px;margin:16px 0}
+.regras li{margin:0 0 7px 18px;font-size:16px;line-height:1.45}
+.turmabox{border:2px solid #2E5C8A;border-radius:13px;background:#EAF1F8;padding:11px 12px 12px;margin-bottom:14px}
+.turmabox .ano{display:inline-block;background:#2E5C8A;color:#fff;font-size:16px;font-weight:800;padding:4px 12px;border-radius:14px;margin-bottom:9px}
+.turmagrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.turmabtn{border:3px solid transparent;border-radius:11px;padding:16px 10px;color:#fff;font-size:26px;
+  font-weight:800;cursor:pointer;font-family:inherit;opacity:.55;transition:.15s}
+.turmabtn.sel{opacity:1;border-color:#17242B;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.turmabtn.a{background:#2E5C8A}.turmabtn.b{background:#4A8C3F}
+.btn{display:block;width:100%;padding:15px;border:none;border-radius:13px;background:var(--roxo);color:#fff;
+  font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;transition:.15s;margin-top:6px}
+.btn:hover:not(:disabled){background:var(--roxo-esc);transform:translateY(-2px)}
+.btn:disabled{background:#B9C5C2;cursor:not-allowed;transform:none}
+.btn.sec{background:var(--verde-esc)}
+.btn.conv{background:var(--conv)}
+.contaregra{background:#EAF1F8;border:2px solid #2E5C8A;border-radius:13px;padding:12px 15px;margin:14px 0;font-size:16px;line-height:1.55}
+.contaregra b{color:#2E5C8A}
+
+/* convivência */
+.topo{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.tag{background:var(--roxo);color:#fff;font-size:15px;font-weight:800;padding:5px 12px;border-radius:16px}
+.tag.c{background:var(--cinza)}
+.placar{font-size:15px;font-weight:800;color:var(--roxo)}
+.kcapa{display:flex;gap:18px;align-items:center;background:var(--convbg);border:2px solid #E3C6C6;border-radius:15px;padding:15px 17px;margin-bottom:14px}
+.kcapa .kfig{flex:0 0 100px}.kcapa .kfig svg{width:100px;height:100px;display:block}
+.kcapa .ktxt b{display:block;font-size:21px;color:var(--conv);margin-bottom:5px}
+.kcapa .ktxt span{display:block;font-size:16px;color:#5A4444}
+.ktexto{background:#fff;border:2px solid #E3C6C6;border-radius:13px;padding:15px 17px;margin-bottom:14px;font-size:16px}
+.ktexto b{color:var(--conv)}.ktexto p{margin-bottom:9px}.ktexto p:last-child{margin-bottom:0}
+.kq{border:2px solid #E3C6C6;border-radius:13px;padding:14px 16px;margin-bottom:12px;background:#fff}
+.kq .kr{font-size:15px;font-weight:800;letter-spacing:1px;color:var(--conv);display:block;margin-bottom:5px}
+.kq .ke{font-size:17px;font-weight:800;margin-bottom:10px}
+.kalt{display:block;width:100%;text-align:left;padding:11px 14px;border:2px solid var(--borda);border-radius:11px;
+  background:#fff;font-size:16px;font-family:inherit;margin-bottom:8px;cursor:pointer;line-height:1.45}
+.kalt:hover:not(:disabled){border-color:var(--conv);background:var(--convbg)}
+.kalt:disabled{cursor:default}
+.kalt.certa{border-color:var(--ok);background:#E3F5DE;font-weight:800}
+.kalt.errada{border-color:var(--erro);background:#FCE4E8;text-decoration:line-through;opacity:.7}
+.kexpl{background:var(--creme);border-left:5px solid var(--conv);border-radius:0 10px 10px 0;padding:10px 13px;font-size:16px;display:none}
+.kexpl.mostra{display:block}
+.kexpl .lei{display:block;font-size:15px;color:var(--cinza);margin-top:6px;font-style:italic}
+.kacordo{background:var(--convbg);border:2px solid #E3C6C6;border-radius:13px;padding:14px 16px;margin-bottom:14px}
+.kacordo label{display:flex;gap:10px;align-items:flex-start;font-size:16px;font-weight:700;cursor:pointer}
+.kacordo input{width:21px;height:21px;accent-color:var(--conv);flex:0 0 auto;margin-top:2px}
+.kacordo .dica{font-size:15px;color:var(--cinza);font-weight:600;margin-top:7px;display:block}
+
+/* aviso tela cheia */
+#avisoTC{display:none;position:fixed;inset:0;z-index:120;background:rgba(120,10,20,.94);align-items:center;justify-content:center;padding:20px;text-align:center}
+#avisoTC.abre{display:flex}
+#avisoTC .cx{background:#fff;border-radius:18px;padding:26px 22px;max-width:520px;width:100%}
+#avisoTC h2{font-size:24px;color:var(--erro);margin-bottom:10px}
+#avisoTC .cont{font-size:50px;font-weight:800;color:var(--erro);margin:10px 0}
+#avisoTC .cont small{font-size:15px;color:var(--cinza);display:block;margin-top:6px}
+
+/* questão */
+.cverde{background:#E8F5E9;border:3px solid var(--verde-esc);border-radius:15px;padding:16px 18px;margin-bottom:13px}
+.cverde h3{font-size:20px;color:var(--verde-esc);margin-bottom:8px}
+.cverde p{font-size:16px;margin-bottom:9px}
+.croxo{background:#F3E8F6;border:3px solid var(--roxo);border-radius:15px;padding:15px 17px;margin-bottom:13px}
+.croxo .rot{font-size:14px;font-weight:800;letter-spacing:1px;color:var(--roxo);display:block;margin-bottom:6px}
+.croxo p{font-size:17px;font-weight:700}
+.claranja{background:#FFF3E0;border-left:6px solid var(--b4);border-radius:0 12px 12px 0;padding:11px 15px;margin-bottom:13px;font-size:16px}
+.cazul{background:#EAF1F8;border-left:6px solid #2E5C8A;border-radius:0 12px 12px 0;padding:11px 15px;margin-bottom:13px;font-size:16px}
+.balao{background:#F3E8F6;border:2px dashed var(--roxo);border-radius:14px;padding:12px 15px;margin-bottom:10px;font-size:16px}
+.balao .quem{display:block;font-size:14px;font-weight:800;letter-spacing:.8px;color:var(--roxo);margin-bottom:4px}
+.selobloom{display:flex;align-items:center;gap:9px;margin-bottom:10px;flex-wrap:wrap}
+.selobloom .bol{width:16px;height:16px;border-radius:50%;flex:0 0 auto}
+.selobloom .nm{font-size:15px;font-weight:800;letter-spacing:.8px}
+.selobloom .dg{font-size:14px;color:var(--cinza);font-weight:700}
+.perg{font-size:19px;font-weight:800;line-height:1.4;margin-bottom:12px}
+.alt{display:block;width:100%;text-align:left;padding:13px 16px;border:2px solid var(--borda);border-radius:12px;
+  background:#fff;font-size:17px;font-family:inherit;margin-bottom:9px;cursor:pointer;line-height:1.45;transition:.12s}
+.alt:hover:not(:disabled){border-color:var(--roxo);background:#FAF5FB}
+.alt:disabled{cursor:default}
+.alt.certa{border-color:var(--ok);background:#E3F5DE;font-weight:800}
+.alt.errada{border-color:var(--erro);background:#FCE4E8;opacity:.75}
+.alt .mrk{font-weight:800;margin-right:6px}
+.gchips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.gchip{background:var(--destaque);border:1px solid #E4C86A;border-radius:16px;padding:4px 12px;font-size:15px;
+  font-weight:700;cursor:pointer;font-family:inherit}
+.fb{border-radius:12px;padding:12px 15px;margin-bottom:12px;font-size:16px;display:none}
+.fb.mostra{display:block}
+.fb.bom{background:#E3F5DE;border-left:6px solid var(--ok)}
+.fb.ruim{background:#FCE4E8;border-left:6px solid var(--erro)}
+.fb b{display:block;margin-bottom:4px}
+
+/* ajuda fragmentada */
+.ajuda{background:#EAF1F8;border:3px solid #2E5C8A;border-radius:15px;padding:15px 17px;margin-bottom:13px;display:none}
+.ajuda.abre{display:block}
+.ajuda .quem{display:block;font-size:14px;font-weight:800;letter-spacing:1px;color:#2E5C8A;margin-bottom:8px}
+.trilhas{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:11px}
+.tchip{border:2px solid #2E5C8A;background:#fff;color:#2E5C8A;border-radius:16px;padding:5px 13px;font-size:15px;
+  font-weight:800;cursor:pointer;font-family:inherit}
+.tchip.on{background:#2E5C8A;color:#fff}
+.fatia{background:#fff;border-radius:11px;padding:12px 15px;font-size:16px;line-height:1.55;margin-bottom:9px}
+.fatiapos{font-size:14px;color:var(--cinza);font-weight:700;margin-bottom:8px}
+.bprox{border:none;border-radius:11px;background:#2E5C8A;color:#fff;padding:10px 18px;font-size:16px;
+  font-weight:800;cursor:pointer;font-family:inherit}
+.bprox:disabled{background:#B9C5C2;cursor:not-allowed}
+
+/* capa de degrau */
+.capa{text-align:center;padding:24px 20px}
+.capa .nivelnum{display:inline-block;background:var(--roxo);color:#fff;font-size:15px;font-weight:800;
+  padding:6px 16px;border-radius:20px;letter-spacing:1px;margin-bottom:12px}
+.capa h2{font-size:26px;color:var(--roxo);margin-bottom:8px}
+.escada{display:flex;align-items:flex-end;justify-content:center;gap:6px;margin:16px 0 6px}
+.degrau{border-radius:8px 8px 0 0;font-size:14px;font-weight:800;text-align:center;padding:6px 4px 8px;color:#fff;
+  display:flex;align-items:flex-end;justify-content:center;border:3px solid transparent;min-width:62px}
+.degrau.futuro{opacity:.30}
+.degrau.fora{opacity:.14;filter:grayscale(1)}
+.degrau.on{border-color:#17242B;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.escada-legenda{text-align:center;font-size:15px;color:var(--cinza);font-weight:700}
+
+/* placares */
+.final{text-align:center;padding:24px 18px}
+.final h2{font-size:26px;color:var(--roxo);margin-bottom:6px}
+.faixa{font-size:17px;font-weight:800;margin-bottom:14px}
+.pontos{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:16px 0}
+@media(max-width:640px){.pontos{grid-template-columns:1fr}}
+.pt{border-radius:13px;padding:14px 10px;color:#fff}
+.pt .n{font-size:29px;font-weight:800;line-height:1}
+.pt .r{font-size:14px;font-weight:800;letter-spacing:.8px;margin-top:4px;opacity:.92}
+.pt.acerto{background:var(--ok)}.pt.tempo{background:#2E5C8A}.pt.total{background:var(--roxo)}
+.falaprof{background:#EAF1F8;border:3px solid #2E5C8A;border-radius:15px;padding:16px 18px;text-align:left;margin:16px 0;font-size:16px}
+.falaprof .quem{font-size:14px;font-weight:800;letter-spacing:1px;color:#2E5C8A;display:block;margin-bottom:6px}
+.falaprof .txt{font-style:italic}
+.regratent{border-radius:13px;padding:14px 16px;text-align:left;margin-bottom:14px;font-size:16px}
+.regratent.refaz{background:#FFF3D6;border-left:6px solid var(--alerta)}
+.regratent.livre{background:#E3F5DE;border-left:6px solid var(--ok)}
+.regratent b{display:block;font-size:15px;letter-spacing:.8px;margin-bottom:5px}
+.premio{border-radius:13px;padding:14px 16px;text-align:left;margin-bottom:14px;font-size:16px;background:#FFF3CD;border-left:6px solid var(--alerta)}
+.premio b{display:block;font-size:15px;letter-spacing:.8px;margin-bottom:5px;color:#8A6600}
+.tabela{width:100%;border-collapse:collapse;margin:16px 0;font-size:16px}
+.tabela th{background:var(--roxo);color:#fff;padding:9px;text-align:left;font-size:15px}
+.tabela td{padding:9px;border-bottom:1px solid #E1EAE7;text-align:left}
+.tabela td.p{font-weight:800;text-align:center;width:80px}
+.tabela td.p.ok{color:var(--ok)}.tabela td.p.no{color:var(--erro)}
+
+/* blocos StartLab redesenhados */
+.scwrap{background:#F6F8FA;border:2px solid var(--borda);border-radius:13px;padding:14px 15px;margin:11px 0;overflow-x:auto}
+.sclegenda{font-size:14px;color:var(--cinza);font-weight:700;margin-top:9px;line-height:1.5}
+.sc-l{display:flex;align-items:center;gap:7px;padding:7px 11px;border-radius:9px;color:#fff;font-weight:700;
+  font-size:15px;margin-bottom:4px;width:fit-content;min-width:0;flex-wrap:wrap}
+.sc-l.dentro{margin-left:26px}
+.sc-l.ctrl{background:var(--sc-ctrl)}
+.sc-l.sens{background:var(--sc-sens)}
+.sc-l.look{background:var(--sc-look)}
+.sc-l.evt{background:var(--sc-evt);border-radius:9px 9px 9px 9px}
+.sc-campo{background:#fff;color:#333;border-radius:12px;padding:3px 11px;font-weight:600;font-size:15px}
+.sc-num{background:#fff;color:#333;border-radius:50px;padding:3px 11px;font-weight:600;font-size:15px}
+.sc-oval{border-radius:50px;padding:3px 12px;font-weight:700;font-size:15px}
+.sc-oval.o-sens{background:#3A8FB7;color:#fff;box-shadow:inset 0 0 0 2px rgba(255,255,255,.5)}
+.sc-oval.o-var{background:var(--sc-ctrl);color:#fff;box-shadow:inset 0 0 0 2px rgba(255,255,255,.5)}
+.sc-op-box{background:var(--sc-op);border-radius:14px;padding:3px 12px;display:flex;align-items:center;gap:7px}
+.sc-fim{font-size:15px;color:#8A6600;margin-left:34px}
+
+/* modal glossário */
+.modal{display:none;position:fixed;inset:0;z-index:130;background:rgba(10,18,22,.9);padding:18px;overflow:auto}
+.modal.abre{display:flex;align-items:center;justify-content:center}
+.modal .caixa{background:#fff;border-radius:16px;padding:22px;max-width:560px;width:100%}
+.modal h3{font-size:21px;color:var(--roxo);margin-bottom:9px}
+.modal p{font-size:16px;margin-bottom:9px}
+
+#selo{position:fixed;right:10px;bottom:10px;z-index:70;background:rgba(23,36,43,.85);color:#fff;font-size:14px;
+  font-weight:700;padding:5px 10px;border-radius:14px;pointer-events:none}
+#pagsel{position:fixed;left:10px;bottom:10px;z-index:70;background:rgba(23,36,43,.85);color:#fff;font-size:14px;
+  font-weight:700;padding:5px 10px;border-radius:14px;pointer-events:none}
+.gmark{background:var(--destaque);border-radius:4px;padding:0 2px}
+</style>
+</head>
+<body>
+
+<div id="statusbar">
+  <span class="chip ver">V02.00</span>
+  <span class="chip" id="stNome">Estudante: —</span>
+  <span class="chip" id="stTurma">Turma: —</span>
+  <span class="chip tent" id="stTent">Tentativa 1</span>
+  <span class="chip" id="stTela">Tela 1</span>
+  <span class="chip sai" id="stSaidas">⛶ Saídas: 0</span>
+</div>
+
+<div id="trilhabar">
+  <div class="telacont" id="telacont">tela 1 · identificação</div>
+  <div class="trilha" id="trilha"></div>
+  <div class="legtrilha">
+    <span><i style="border:2px solid #fff"></i>ainda vai responder</span>
+    <span><i style="background:#26890C"></i>acertou de primeira</span>
+    <span><i style="background:#E07B2C"></i>acertou depois</span>
+    <span><i style="background:#E21B3C"></i>não acertou</span>
+    <span><i style="background:#F0C419"></i>onde você está</span>
+    <span><i style="background:#8E2B2B;border-radius:3px"></i>pausa de convivência</span>
+  </div>
+</div>
+
+<div id="avisoTC"><div class="cx">
+  <h2>Você saiu da tela cheia</h2>
+  <p>Esta revisão deve ser feita em tela cheia. A saída foi registrada e aparece no seu relatório final.</p>
+  <div class="cont" id="contTC">1<small>saída(s) registrada(s)</small></div>
+  <button class="btn" onclick="voltarTelaCheia()">Voltar para a tela cheia</button>
+  <button class="btn sec" onclick="ignorarTelaCheia()">Continuar sem tela cheia</button>
+</div></div>
+
+<div class="wrap" id="palco"></div>
+
+<div class="modal" id="modalG" onclick="fecharModal()">
+  <div class="caixa" id="caixaG" onclick="event.stopPropagation()"></div></div>
+
+<div id="pagsel">tela 1</div>
+<div id="selo">V02.00 · REV AAIM · 6º · U.01</div>
+
+<script>
+/* ================================================================
+   NAV.07-REV · REVISÃO DA 1ª AAIM · 6º ANO · 3º BIMESTRE · U.01
+   V02.00 · lote piloto: questões 1, 2 e 3 da AAIM oficial
+   Motor herdado de NAV.07 V04.00 · telas herdadas do ROB-KAHOOT V.28.01
+   ================================================================ */
+const VERSAO = "V02.00";
+const CHAVE  = "nav07rev_estado_6ano_3bim_aaim";
+const MAXT   = 4;
+const NDEG   = 3;   /* degraus por questao: B3, B4, B5 · B1 e B2 sairam por decisao de 24/08/2026 */
+
+/* ---------------- BLOCOS REDESENHADOS (nunca print) ---------------- */
+const COD = {
+q1:`<div class="scwrap">
+  <div class="sc-l evt">quando <span class="sc-oval o-sens" style="background:#4CAF50">⚑</span> for clicado</div>
+  <div class="sc-l look">pense <span class="sc-campo">Vamos começar a brincadeira!</span> por <span class="sc-num">2</span> segundos</div>
+  <div class="sc-l ctrl">repita até que <span class="sc-op-box"><span class="sc-oval o-sens">resposta</span> = <span class="sc-campo">morangos</span></span></div>
+  <div class="sc-l sens dentro">pergunte <span class="sc-campo">Complete: No piquenique, levamos doces, sucos e ______.</span> e espere</div>
+  <div class="sc-fim">↰ volta para o repita até que</div>
+  <div class="sc-l look">diga <span class="sc-campo">Muito bem! Você acertou!</span></div>
+  <div class="sclegenda">Em texto, para quem não enxerga bem as cores: o bloco amarelo de cima é de evento. O roxo é de aparência. O laranja é de controle e é ele que segura o bloco azul de sensor dentro dele.</div>
+</div>`,
+q2:`<div class="scwrap">
+  <div class="sc-l evt">quando este ator for clicado</div>
+  <div class="sc-l ctrl">se <span class="sc-op-box"><span class="sc-oval o-var">temChave</span> = <span class="sc-campo">sim</span></span> então</div>
+  <div class="sc-l look dentro">mude para o cenário <span class="sc-campo">sala secreta ▾</span></div>
+  <div class="sc-l ctrl">senão</div>
+  <div class="sc-l look dentro">diga <span class="sc-campo">Você precisa encontrar a chave!</span> por <span class="sc-num">2</span> segundos</div>
+  <div class="sclegenda">Em texto: o bloco laranja de controle tem duas partes, o "se" e o "senão". Cada parte guarda um bloco roxo diferente dentro dela.</div>
+</div>`,
+q3:`<div class="scwrap">
+  <div class="sc-l evt">quando <span class="sc-oval o-sens" style="background:#4CAF50">⚑</span> for clicado</div>
+  <div class="sc-l look">mude para a fantasia <span class="sc-campo">carrinho_vazio ▾</span></div>
+  <div class="sc-l ctrl">repita <span class="sc-num">3</span> vezes</div>
+  <div class="sc-l look dentro">diga <span class="sc-campo">Pegue um produto!</span> por <span class="sc-num">1</span> segundos</div>
+  <div class="sc-l look dentro">próxima fantasia</div>
+  <div class="sc-fim">↰ volta para o repita</div>
+  <div class="sc-l look">diga <span class="sc-campo">Carrinho cheio!</span> por <span class="sc-num">2</span> segundos</div>
+  <div class="sclegenda">Em texto: o bloco laranja "repita 3 vezes" guarda dois blocos roxos dentro dele. Os dois de fora, em cima e embaixo, ficam fora da repetição.</div>
+</div>`,
+q4:`<div class="scwrap">
+  <div class="sc-l evt">quando <span class="sc-oval o-sens" style="background:#4CAF50">&#9873;</span> for clicado</div>
+  <div class="sc-l look">mude para a fantasia <span class="sc-campo">musica_1 &#9662;</span></div>
+  <div class="sc-l ctrl">espere <span class="sc-num">1</span> seg</div>
+  <div class="sc-l look">mude para a fantasia <span class="sc-campo">musica_2 &#9662;</span></div>
+  <div class="sc-l ctrl">espere <span class="sc-num">1</span> seg</div>
+  <div class="sc-l look">mude para a fantasia <span class="sc-campo">musica_3 &#9662;</span></div>
+  <div class="sclegenda">Em texto: os blocos roxos trocam a fantasia. Entre eles h&aacute; blocos laranja de espera. Nenhum bloco guarda outro dentro dele: tudo acontece em ordem, de cima para baixo.</div>
+</div>`,
+q5:`<div class="scwrap">
+  <div class="sc-l evt">quando <span class="sc-oval o-sens" style="background:#4CAF50">&#9873;</span> for clicado</div>
+  <div class="sc-l look">diga <span class="sc-campo">Lan&ccedil;ando o dado!</span> por <span class="sc-num">1</span> segundos</div>
+  <div class="sc-l look">mude para a fantasia <span class="sc-campo">lado 4 &#9662;</span></div>
+  <div class="sc-l ctrl">espere <span class="sc-num">1</span> seg</div>
+  <div class="sc-l look">diga <span class="sc-campo">Fim da partida!</span> por <span class="sc-num">1</span> segundos</div>
+  <div class="sclegenda">Em texto: existe uma &uacute;nica troca de fantasia no c&oacute;digo inteiro. N&atilde;o h&aacute; nenhum bloco de repeti&ccedil;&atilde;o guardando os outros.</div>
+</div>`,
+q6:`<div class="scwrap">
+  <div class="sc-l evt">quando <span class="sc-oval o-sens" style="background:#4CAF50">&#9873;</span> for clicado</div>
+  <div class="sc-l look">diga <span class="sc-campo">Ajude a descobrir o culpado do roubo!</span> por <span class="sc-num">2</span> segundos</div>
+  <div class="sc-l ctrl">repita at&eacute; que <span class="sc-op-box"><span class="sc-oval o-sens">resposta</span> = <span class="sc-campo">Gato Preto</span></span></div>
+  <div class="sc-l sens dentro">pergunte <span class="sc-campo">Quem roubou os doces na festa?</span> e espere</div>
+  <div class="sc-l ctrl dentro">se <span class="sc-op-box"><span class="sc-oval o-sens">resposta</span> = <span class="sc-campo">Gato Preto</span></span> ent&atilde;o</div>
+  <div class="sc-l look dentro" style="margin-left:52px">diga <span class="sc-campo">Voc&ecirc; encontrou o culpado!</span></div>
+  <div class="sc-fim">&#8624; volta para o repita at&eacute; que</div>
+  <div class="sclegenda">Em texto: h&aacute; dois blocos laranja. O de fora &eacute; o repita at&eacute; que e abra&ccedil;a tudo. O de dentro &eacute; o se... ent&atilde;o. Repare no recuo: quanto mais &agrave; direita, mais fundo o bloco est&aacute;.</div>
+</div>`};
+
+/* ---------------- BLOOM ---------------- */
+const BLOOM_COR = {B1:"#2E5C8A", B2:"#4A8C3F", B3:"#F0C419", B4:"#E07B2C", B5:"#D32F2F"};
+const BLOOM_NOME= {B1:"LOCALIZAR", B2:"IDENTIFICAR", B3:"ENTENDER", B4:"TESTAR", B5:"CONCLUIR"};
+const BLOOM_SUB = {B1:"onde a informação está", B2:"qual elemento decide a questão",
+                   B3:"o que esse elemento significa", B4:"conferir se a fala se sustenta",
+                   B5:"fechar a resposta da avaliação"};
+
+/* ---------------- BANCO ---------------- */
+const BANCO = [
+{
+ id:"Q1", persona:"O piquenique da adivinhação",
+ contexto:["Um grupo de amigos levou o lanche para o parque e inventou uma brincadeira de adivinhação. Eles programaram o jogo no StartLab para continuar perguntando até alguém acertar.",
+           "Este é o trecho de código que eles montaram:"],
+ codigo:COD.q1,
+ colega:{nome:"Nina", fala:"Para mim o bloco que segura o jogo funcionando é o <b>pergunte</b>, porque é ele que fica aparecendo na tela."},
+ oficial:{
+   q:"Com base nessa estrutura de código, qual bloco representa o laço de repetição que mantém o jogo em execução até que a resposta correta seja digitada?",
+   alts:["quando [bandeira verde] for clicado",
+         "repita até que <(resposta) = [morangos]>",
+         "pergunte [Complete: No piquenique...] e espere",
+         "diga [Muito bem! Você acertou!]"],
+   certa:1},
+ dica:"Ache primeiro o bloco laranja que tem outro bloco encaixado dentro dele. É nele que a resposta mora.",
+ glossario:[
+  {t:"laço de repetição", d:"É um bloco que manda o computador fazer a mesma coisa mais de uma vez. Não é um bloco que fala com o jogador."},
+  {t:"repita até que", d:"É o bloco laranja que fica repetindo enquanto a condição não fica verdadeira. Não é um bloco que repete um número fixo de vezes."},
+  {t:"resposta", d:"É a palavra que o jogador digitou por último. Não é a resposta certa da brincadeira."},
+  {t:"pergunte e espere", d:"É o bloco azul que mostra a pergunta e para o jogo até o jogador digitar. Não é ele que decide quantas vezes a pergunta aparece."},
+  {t:"condição", d:"É a comparação que pode dar certo ou errado, como resposta igual a morangos. Não é um comando, é um teste."}],
+ degraus:[
+  {b:"B3", perg:"O que significa repita até que resposta = morangos?",
+   cor:["Continue perguntando enquanto a resposta não for morangos",
+        "Só pare de repetir quando o jogador digitar morangos",
+        "Fique repetindo até a comparação ficar verdadeira",
+        "Repita sem parar, e a palavra morangos é o que encerra"],
+   err:["Repita exatamente três vezes e depois pare",
+        "Pergunte uma vez só e mostre a resposta certa",
+        "Repita até o jogador desistir e fechar o jogo",
+        "O programa fica repetindo porque a palavra morangos deixa o computador com fome"],
+   ajuda:[["Olhe o bloco laranja do desenho.","Leia o nome dele devagar: repita ATÉ QUE.","Até que o quê? A resposta está no pedaço verde."],
+          ["Você precisa saber o que é condição.","Condição é um teste que dá certo ou errado.","Enquanto dá errado, o laço continua girando."],
+          ["É como esperar a água ferver.","Você fica olhando, olhando, olhando.","Ferveu, você para de olhar."]]},
+  {b:"B4", perg:"A Nina disse que é o pergunte que mantém o jogo funcionando. A fala dela se sustenta?",
+   cor:["Não. O pergunte só mostra a pergunta uma vez cada vez que é chamado",
+        "Não. Quem manda o pergunte acontecer de novo é o bloco laranja",
+        "Não. Sem o repita até que, o pergunte apareceria uma única vez",
+        "Não. O pergunte é o que aparece na tela, mas não é o que repete"],
+   err:["Sim. O pergunte é o bloco mais importante do código",
+        "Sim. Como ele fica visível na tela, é ele que segura o jogo",
+        "Sim. O bloco azul sempre manda no bloco laranja",
+        "Sim. O pergunte tem um espaço em branco, e espaço em branco repete sozinho"],
+   ajuda:[["A pergunta é sobre a fala da Nina, não sobre o código sozinho.","Imagine apagar o bloco laranja do desenho.","O que sobraria? Uma pergunta só."],
+          ["Você precisa separar duas ideias.","Uma é o que aparece na tela.","A outra é o que manda repetir."],
+          ["É como um sino e a pessoa que bate nele.","O sino faz o barulho.","Mas quem repete o barulho é quem bate."]]},
+  {b:"B5", perg:"", dicaB5:"As alternativas aparecem embaralhadas na avaliação oficial. Leia cada uma inteira antes de marcar."}]
+},
+{
+ id:"Q2", persona:"A sala secreta do Felipe",
+ contexto:["Felipe está montando um jogo de aventura. Ele programou uma sala secreta que só abre se o jogador já tiver encontrado a chave.",
+           "Observe o código que ele criou:"],
+ codigo:COD.q2,
+ colega:{nome:"Téo", fala:"Eu acho que esse código <b>repete a verificação várias vezes</b> até o jogador conseguir encontrar a chave."},
+ oficial:{
+   q:"Com base nesse código, de que forma a estrutura condicional determina o que acontece no jogo?",
+   alts:["Exibe uma mensagem ao jogador e altera a variável se a condição for verdadeira.",
+         "Encaminha o jogador para a sala secreta e exibe a mensagem se a condição for verdadeira.",
+         "Verifica se o jogador tem a chave e permite o acesso à sala secreta se a condição for verdadeira.",
+         "Repete a verificação várias vezes e permite que o jogador encontre a chave se a condição for verdadeira."],
+   certa:2},
+ dica:"Ache o pedaço verde do bloco laranja: é a comparação. Depois veja que o bloco tem duas saídas, e só uma acontece de cada vez.",
+ glossario:[
+  {t:"estrutura condicional", d:"É o bloco que escolhe um caminho, olhando se uma condição é verdadeira. Não é um bloco que repete."},
+  {t:"senão", d:"É a parte do bloco laranja que guarda o que acontece quando a condição é falsa. Não é um bloco que faz o programa voltar ao começo."},
+  {t:"temChave", d:"É uma variável, uma caixinha que guarda um valor do jogo. Não é um comando que o jogador digita."},
+  {t:"mude para o cenário", d:"É o bloco roxo que troca o fundo da tela do jogo. Não é o bloco que decide se a troca vai acontecer."},
+  {t:"variável", d:"É um nome que guarda uma informação que pode mudar durante o jogo. Não é um texto fixo escrito na tela."}],
+ degraus:[
+  {b:"B3", perg:"O que a palavra senão faz nesse código?",
+   cor:["Guarda o que acontece quando a condição é falsa",
+        "Define o caminho do jogador que ainda não tem a chave",
+        "Separa o caminho de quem passou do caminho de quem não passou",
+        "Marca o outro lado da escolha feita pelo bloco se"],
+   err:["Repete o bloco se mais uma vez",
+        "Faz o jogo esperar dois segundos antes de continuar",
+        "Muda o valor da variável temChave para sim",
+        "Serve para o computador pedir desculpa ao jogador"],
+   ajuda:[["Leia a palavra senão como se não.","Se não deu certo, então o quê?","A resposta está no bloco logo abaixo dela."],
+          ["Você precisa entender verdadeiro e falso.","O então cuida do verdadeiro.","O senão cuida do falso."],
+          ["É como uma bifurcação na estrada.","Um caminho para quem tem passagem.","Outro para quem não tem."]]},
+  {b:"B4", perg:"O Téo disse que o código repete a verificação várias vezes. A fala dele se sustenta?",
+   cor:["Não. Não existe nenhum bloco de repetição nesse código",
+        "Não. O bloco se verifica uma vez só, a cada clique no ator",
+        "Não. Ele confundiu o se com o repita até que",
+        "Não. Para repetir seria preciso um bloco de repetição, e não há nenhum"],
+   err:["Sim. Todo bloco laranja repete alguma coisa",
+        "Sim. A palavra senão faz o código voltar ao começo",
+        "Sim. Como o ator pode ser clicado, o código repete sozinho",
+        "Sim. Verificações se repetem automaticamente porque o computador é rápido"],
+   ajuda:[["A pergunta é sobre a fala do Téo.","Procure no desenho a palavra repita.","Ela não está lá."],
+          ["Você precisa separar dois blocos laranja diferentes.","Um escolhe caminho: o se.","Outro repete: o repita."],
+          ["É como conferir o ingresso na entrada.","Confere uma vez e pronto.","Não fica conferindo sem parar."]]},
+  {b:"B5", perg:"", dicaB5:"Duas alternativas falam em sala secreta. Leia as duas até o fim antes de escolher."}]
+},
+{
+ id:"Q3", persona:"O carrinho de compras do Pedro",
+ contexto:["Pedro programou um jogo em que o personagem enche um carrinho de compras. Cada fantasia representa um produto que entrou no carrinho.",
+           "O jogo precisa adicionar seis produtos. Este é o código que ele fez:"],
+ codigo:COD.q3,
+ colega:{nome:"Rafa", fala:"O erro aí é o <b>espere</b>: ele tinha que vir antes da troca de fantasia, senão o produto não entra."},
+ oficial:{
+   q:"Ao executar o jogo, ele termina sem que todos os produtos sejam adicionados. Qual é o erro que causa esse comportamento?",
+   alts:["O número no bloco repita está menor do que o necessário.",
+         "O código deveria usar o bloco sempre em vez de repita.",
+         "O uso do bloco de fantasia é incompatível com a repetição.",
+         "O comando espere precisa estar antes da troca de fantasia."],
+   certa:0},
+ dica:"Ache o número dentro do bloco repita e compare com o número de produtos que o enunciado pede.",
+ glossario:[
+  {t:"repita", d:"É o bloco laranja que repete um número exato de voltas. Não é o bloco que repete até uma condição virar verdadeira."},
+  {t:"fantasia", d:"É cada aparência diferente que um ator pode ter. Não é o nome do ator."},
+  {t:"próxima fantasia", d:"É o bloco que troca o ator para a aparência seguinte da lista. Não é um bloco que cria fantasias novas."},
+  {t:"sempre", d:"É o bloco que repete para sempre e nunca termina sozinho. Não é adequado quando você já sabe o número de voltas."},
+  {t:"segundos", d:"É o tempo que a fala fica parada na tela. Não é o que controla quantos produtos entram."}],
+ degraus:[
+  {b:"B3", perg:"O que acontece quando o número do repita é menor do que o necessário?",
+   cor:["O jogo dá menos voltas e para antes da hora",
+        "Faltam produtos, porque o laço termina cedo demais",
+        "O carrinho não enche, porque o bloco repetiu poucas vezes",
+        "O código roda certinho, mas incompleto"],
+   err:["O jogo trava e não abre mais",
+        "O jogo repete para sempre e nunca termina",
+        "O jogo troca a ordem dos produtos",
+        "O computador aumenta o número sozinho quando percebe o erro"],
+   ajuda:[["Ache o número dentro do bloco laranja: é 3.","Releia o enunciado: são 6 produtos.","Agora compare os dois números."],
+          ["Você precisa entender o que é uma volta.","Cada volta troca uma fantasia.","Cada fantasia é um produto."],
+          ["É como dar três passos numa escada de seis.","Você não cai.","Só não chega em cima."]]},
+  {b:"B4", perg:"O Rafa disse que o erro é a posição do espere. A fala dele se sustenta?",
+   cor:["Não. Mudar o espere de lugar não muda o número de voltas",
+        "Não. O espere mexe no tempo, não na quantidade de produtos",
+        "Não. Mesmo trocando o espere de lugar, o laço continuaria dando três voltas",
+        "Não. O problema é o número do repita, e não a ordem dos blocos"],
+   err:["Sim. A ordem dos blocos sempre muda a quantidade de repetições",
+        "Sim. Sem o espere no lugar certo, a fantasia não troca",
+        "Sim. O espere é quem conta os produtos",
+        "Sim. O tempo de espera empurra os produtos para dentro do carrinho"],
+   ajuda:[["A pergunta é sobre a fala do Rafa.","Pergunte a si mesmo: o espere conta alguma coisa?","Ele só marca tempo."],
+          ["Você precisa separar tempo de quantidade.","Segundos são tempo.","Vezes são quantidade."],
+          ["É como andar mais devagar na escada.","Você demora mais.","Mas o número de degraus continua o mesmo."]]},
+  {b:"B5", perg:"", dicaB5:"Duas alternativas falam do bloco de repetição. Só uma diz o que realmente está errado."}]
+},
+{
+ id:"Q4", persona:"O rádio da Carla",
+ contexto:["Carla montou um código para representar a escolha de três músicas. O ator Rádio tem três fantasias, uma para cada música.",
+           "Observe o código que ela criou:"],
+ codigo:COD.q4,
+ colega:{nome:"Bia", fala:"Como são três fantasias, o Rádio vai <b>mostrar as três ao mesmo tempo</b> assim que a bandeira for clicada."},
+ oficial:{
+   q:"Nesse caso, ao clicar na bandeira verde, o que será observado na aparência do ator Rádio?",
+   alts:["Ele mostrará todas as fantasias ao mesmo tempo.",
+         "Ele exibirá as fantasias em sequência a cada segundo.",
+         "Ele ficará repetindo a troca entre as fantasias sem parar.",
+         "Ele escolherá uma fantasia aleatoriamente a cada execução."],
+   certa:1},
+ dica:"Leia o código de cima para baixo, uma linha de cada vez. Repare onde estão os blocos laranja de espera.",
+ glossario:[
+  {t:"sequência", d:"É a ordem em que os blocos acontecem, de cima para baixo. Não é uma coisa que acontece tudo junto."},
+  {t:"espere", d:"É o bloco laranja que segura o programa parado por um tempo. Não é um bloco que repete."},
+  {t:"mude para a fantasia", d:"É o bloco roxo que troca a aparência do ator por uma fantasia escolhida. Não é o bloco próxima fantasia, que anda sozinho na lista."},
+  {t:"ator", d:"É o personagem ou objeto que aparece na tela do jogo. Não é o cenário de fundo."},
+  {t:"aleatoriamente", d:"É quando o computador sorteia um valor sem ordem fixa. Não é o que acontece quando os blocos estão em sequência."}],
+ degraus:[
+  {b:"B3", perg:"O que os dois blocos espere 1 seg fazem entre as trocas de fantasia?",
+   cor:["Seguram cada fantasia na tela por um segundo antes da próxima",
+        "Fazem as trocas acontecerem uma de cada vez, com pausa no meio",
+        "Dão tempo para o jogador ver cada música antes de mudar",
+        "Espaçam as trocas, de modo que elas aparecem em sequência"],
+   err:["Fazem as três fantasias aparecerem juntas",
+        "Fazem o código voltar ao começo depois de um segundo",
+        "Sorteiam qual fantasia vai aparecer",
+        "Deixam o ator invisível durante um segundo"],
+   ajuda:[["Leia o código de cima para baixo.","Entre uma troca e outra tem um bloco laranja.","Ele segura o tempo."],
+          ["Você precisa entender sequência.","Sequência é uma coisa depois da outra.","Nunca tudo ao mesmo tempo."],
+          ["É como virar as páginas de um álbum.","Uma página de cada vez.","Com uma pausa para olhar."]]},
+  {b:"B4", perg:"A Bia disse que o Rádio mostra as três fantasias ao mesmo tempo. A fala dela se sustenta?",
+   cor:["Não. Um ator só pode vestir uma fantasia de cada vez",
+        "Não. Os blocos acontecem em sequência, nunca simultaneamente",
+        "Não. Os blocos espere provam que uma troca espera a outra",
+        "Não. O que ela descreve exigiria três atores, não três fantasias"],
+   err:["Sim. Três fantasias no mesmo código aparecem juntas",
+        "Sim. Como o computador é rápido, dá impressão de simultâneo e é isso mesmo",
+        "Sim. O bloco quando a bandeira for clicado dispara tudo de uma vez",
+        "Sim. As fantasias se empilham porque ficam uma em cima da outra"],
+   ajuda:[["A pergunta é sobre a fala da Bia.","Pense numa pessoa com três camisetas.","Ela veste as três ao mesmo tempo?"],
+          ["Você precisa saber o que é fantasia.","Fantasia é a aparência atual do ator.","Atual quer dizer uma só."],
+          ["É como uma placa de rua que gira.","Ela mostra um lado por vez.","Nunca os dois de frente."]]},
+  {b:"B5", perg:"", dicaB5:"Três alternativas descrevem coisas que o código não faz. Compare cada uma com o desenho antes de marcar."}]
+},
+{
+ id:"Q5", persona:"O dado do jogo de tabuleiro",
+ contexto:["Num jogo de tabuleiro feito no StartLab, o dado precisa ser lançado cinco vezes para simular uma partida completa.",
+           "Veja como o código foi feito:"],
+ codigo:COD.q5,
+ colega:{nome:"Ivo", fala:"É só <b>aumentar o tempo de espera</b>: com mais segundos, o dado vai ser lançado mais vezes."},
+ oficial:{
+   q:"Para representar corretamente um jogo com cinco lançamentos de dado, qual modificação seria necessária neste código?",
+   alts:["Acrescentar o bloco sempre após a troca de fantasia.",
+         "Aumentar o tempo de espera para que o jogo dure mais.",
+         "Inserir o comando mude de ator para sortear outros lados do dado.",
+         "Incluir um laço de repetição para que o dado seja lançado várias vezes."],
+   certa:3},
+ dica:"Conte quantas vezes o dado é lançado nesse código. Depois compare com as cinco vezes que o enunciado pede.",
+ glossario:[
+  {t:"laço de repetição", d:"É o bloco que faz o computador repetir um trecho do código. Não é um bloco que espera."},
+  {t:"sempre", d:"É o bloco que repete sem fim e nunca para sozinho. Não serve quando você sabe o número exato de voltas."},
+  {t:"espere", d:"É o bloco que segura o programa parado por um tempo. Não muda quantas vezes uma ação acontece."},
+  {t:"fantasia", d:"É a aparência do ator, aqui cada lado do dado. Não é um comando de sorteio."},
+  {t:"lançamento", d:"É cada vez que o dado mostra um lado novo. Não é o tempo que o dado fica parado na tela."}],
+ degraus:[
+  {b:"B3", perg:"Quantas vezes o dado é lançado no código como ele está agora?",
+   cor:["Uma vez só","Apenas um lançamento, o lado 4",
+        "Uma, porque só existe um bloco de troca de fantasia",
+        "Um único lançamento, e depois o jogo termina"],
+   err:["Cinco vezes","Três vezes","Nenhuma vez","Quatro vezes, por causa do lado 4"],
+   ajuda:[["Procure no desenho o bloco que troca a fantasia.","Conte quantos blocos desse tipo existem.","Existe só um."],
+          ["Você precisa separar duas coisas.","O número 4 é o nome do lado do dado.","Não é a quantidade de lançamentos."],
+          ["É como jogar o dado na mesa.","Você jogou uma vez.","Esperar mais tempo não joga de novo."]]},
+  {b:"B4", perg:"O Ivo disse que basta aumentar o tempo de espera. A fala dele se sustenta?",
+   cor:["Não. O tempo de espera não cria lançamentos novos",
+        "Não. Esperar mais só deixa o jogo mais lento, com um lançamento só",
+        "Não. Quantidade de voltas e tempo de espera são coisas diferentes",
+        "Não. Sem um bloco de repetição, o dado continua sendo lançado uma vez"],
+   err:["Sim. Quanto mais segundos, mais vezes o código roda",
+        "Sim. O bloco espere repete o que está acima dele",
+        "Sim. O tempo é o que controla a quantidade no StartLab",
+        "Sim. Com cinco segundos o dado é lançado cinco vezes"],
+   ajuda:[["A pergunta é sobre a fala do Ivo.","Imagine trocar 1 segundo por 10 segundos.","O dado seria lançado mais vezes? Não."],
+          ["Você precisa separar tempo de quantidade.","Segundos medem duração.","Vezes medem repetição."],
+          ["É como olhar mais tempo para uma foto.","A foto continua sendo uma.","Olhar demorado não vira álbum."]]},
+  {b:"B5", perg:"", dicaB5:"Três alternativas mudam alguma coisa no código, mas só uma resolve o problema de quantidade."}]
+},
+{
+ id:"Q6", persona:"O detetive dos doces",
+ contexto:["Felipe programou uma brincadeira de detetive: o jogador precisa descobrir quem roubou os doces da festa. O personagem continua perguntando até a resposta certa aparecer.",
+           "Veja como o código foi construído:"],
+ codigo:COD.q6,
+ colega:{nome:"Lu", fala:"Dava para trocar por <b>se... então</b> sem problema: ele também fica repetindo a pergunta até acertar."},
+ oficial:{
+   q:"Com base no funcionamento do código, por que Felipe usou a estrutura repita até que em vez de se... então?",
+   alts:["Porque repita até que é o único bloco capaz de usar variáveis como condição.",
+         "Porque se... então só executa comandos quando a condição já começa como verdadeira.",
+         "Porque repita até que mantém a pergunta e a verificação até que a condição seja verdadeira.",
+         "Porque se... então repete automaticamente a pergunta até que a resposta esteja correta."],
+   certa:2},
+ dica:"Repare que existem dois blocos laranja diferentes no desenho: um repete, o outro escolhe. Veja qual está por fora.",
+ glossario:[
+  {t:"repita até que", d:"É o bloco que fica repetindo enquanto a condição for falsa. Não é um bloco que escolhe entre dois caminhos."},
+  {t:"se... então", d:"É o bloco que testa uma vez e decide o que fazer. Não é um bloco que repete."},
+  {t:"condição", d:"É a comparação que pode ser verdadeira ou falsa. Não é um comando que aparece na tela."},
+  {t:"resposta", d:"É o que o jogador digitou por último. Não é a resposta certa guardada pelo jogo."},
+  {t:"verificação", d:"É o momento em que o programa confere se a condição é verdadeira. Não é o momento em que ele pergunta."}],
+ degraus:[
+  {b:"B3", perg:"Nesse código, o que o bloco de fora garante que o bloco se... então sozinho não garantiria?",
+   cor:["Que a pergunta volte a aparecer enquanto a resposta estiver errada",
+        "Que a verificação se repita, e não aconteça uma vez só",
+        "Que o jogo continue insistindo até a condição ficar verdadeira",
+        "Que o jogador tenha várias chances, e não apenas uma"],
+   err:["Que a resposta certa apareça escrita na tela",
+        "Que o jogo termine mais rápido",
+        "Que a variável mude de valor sozinha",
+        "Que o computador adivinhe quem roubou os doces"],
+   ajuda:[["No desenho existem dois blocos laranja.","Um está por fora e abraça o outro.","Veja o nome do que está por fora."],
+          ["Você precisa separar repetir de escolher.","Repita até que repete.","Se... então escolhe."],
+          ["É como bater na porta até abrirem.","Bater uma vez é o se... então.","Bater até abrir é o repita até que."]]},
+  {b:"B4", perg:"A Lu disse que o se... então também ficaria repetindo a pergunta. A fala dela se sustenta?",
+   cor:["Não. O se... então testa uma vez e segue adiante",
+        "Não. Ele escolhe um caminho, mas não volta para trás",
+        "Não. Sem o bloco de repetição por fora, a pergunta apareceria uma vez",
+        "Não. Repetir e escolher são funções diferentes, e ele só escolhe"],
+   err:["Sim. Todo bloco laranja repete alguma coisa",
+        "Sim. O se... então repete até a condição ficar verdadeira",
+        "Sim. Como a pergunta está dentro dele, ela se repete sozinha",
+        "Sim. O se... então tem memória e tenta de novo por conta própria"],
+   ajuda:[["A pergunta é sobre a fala da Lu.","No desenho, o se... então está por dentro.","Quem faz ele acontecer de novo é o bloco de fora."],
+          ["Você precisa comparar os dois blocos.","Um tem a palavra repita no nome.","O outro não tem."],
+          ["É como um interruptor e um pêndulo.","O interruptor decide uma vez.","O pêndulo é que vai e volta."]]},
+  {b:"B5", perg:"", dicaB5:"Duas alternativas dizem que o se... então repete. Confira no desenho se isso é verdade antes de marcar."}]
+}
+];
+
+/* ---------------- CONVIVÊNCIA · uma única pausa ---------------- */
+const SVG_FONE = `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<circle cx="100" cy="100" r="88" fill="#FBECEC" stroke="#B23A3A" stroke-width="16"/>
+<g stroke="#B23A3A" stroke-width="5" fill="none" stroke-linecap="round">
+<path d="M60 74 C50 88 50 112 60 126"/><path d="M48 64 C33 84 33 116 48 136"/>
+<path d="M140 74 C150 88 150 112 140 126"/><path d="M152 64 C167 84 167 116 152 136"/></g>
+<rect x="72" y="52" width="56" height="96" rx="9" fill="#4A4458"/>
+<rect x="78" y="62" width="44" height="70" rx="3" fill="#8FA3C4"/>
+<circle cx="100" cy="140" r="5" fill="#8FA3C4"/>
+<path d="M38 38 L162 162" stroke="#B23A3A" stroke-width="18" stroke-linecap="round"/></svg>`;
+
+const KONV = {cod:"K1", titulo:"O celular e a lei · o que mudou",
+ linha:"Dois minutos. Não vale nota. Este aviso aparece uma vez só, agora no começo.",
+ texto:["Duas leis mudaram o uso de celular na escola. A federal <b>15.100/2025</b> vale no Brasil inteiro. A estadual <b>18.058/2024</b> vale em São Paulo.",
+  "Elas proíbem o uso durante <b>todo o tempo</b> em que você está na escola. Isso inclui a aula, o recreio e o intervalo.",
+  "<b>O computador desta aula é diferente.</b> Ele foi pedido pelo professor, para a atividade. Isso é uso pedagógico e está entre as exceções previstas na lei. O celular no bolso, não.",
+  "<b>Sobre a tela cheia:</b> a revisão abre em tela cheia para você não se perder entre janelas. Se sair, um aviso aparece e a saída fica registrada no seu relatório."],
+ perguntas:[
+  {rot:"LEMBRAR", q:"A lei do celular vale também no recreio e no intervalo?",
+   ops:["Verdadeiro: vale por todo o tempo em que você está na escola","Falso: fora da sala de aula está liberado"], c:0,
+   expl:"Verdadeiro. A mudança de 2025 foi justamente essa: o recreio e os intervalos entraram junto. Antes muita gente entendia que fora da sala liberava.",
+   lei:"Lei estadual 18.058/2024 · vale por todo o período de permanência do estudante na escola."},
+  {rot:"NO DIA A DIA", q:"Sua mãe precisa avisar que vai te buscar mais cedo. O que a lei espera?",
+   ops:["Você responde rápido e guarda de novo","Ela liga na secretaria, e a escola avisa você","Você pede para ir ao banheiro e responde lá","Você espera o recreio para responder"], c:1,
+   expl:"A lei obrigou a escola a manter um canal para a família. Você não fica sem contato: o que muda é o caminho do contato.",
+   lei:"Lei estadual 18.058/2024 · a escola mantém canais acessíveis para comunicação com as famílias."}],
+ acordo:"Eu li, entendi, e o meu celular está guardado durante esta revisão."};
+
+const FALAS = {
+ alto:["Você está lendo com atenção. É isso que faz diferença na avaliação de verdade.",
+       "Ritmo bom. Continue lendo a alternativa inteira antes de marcar."],
+ medio:["Vale mais acertar poucas com atenção do que responder tudo depressa. Diminua o ritmo.",
+        "Você está no caminho. Use a ajuda quando ela abrir, ela existe para isso."],
+ baixo:["Sem pressa. Releia o código antes de olhar as alternativas.",
+        "Volte no bloco de ajuda com calma. Ninguém fica preso aqui."]};
+
+/* ---------------- ESTADO ---------------- */
+let estudante="", turma="", turmaSel=null;
+let roteiro=[], iTela=0, respostas=[], tent={}, ajudaVista={};
+let saidasTC=0, trocasAba=0, avisoAberto=false, horaInicio=null, convOk=false;
+let trilhaAtual=0, fatiaAtual=0;
+
+function montarRoteiro(){
+  roteiro=[{t:"konv"}];
+  BANCO.forEach((q,qi)=>{
+    roteiro.push({t:"capa", q:qi});
+    q.degraus.forEach((d,di)=>roteiro.push({t:"perg", q:qi, d:di}));
+    if((qi+1)%3===0 && qi+1<BANCO.length) roteiro.push({t:"parcial"});
+  });
+  roteiro.push({t:"final"});
+}
+function totPerguntas(){return BANCO.length*NDEG}
+function idxPerg(qi,di){return qi*NDEG+di}
+
+/* ---------------- PERSISTÊNCIA ---------------- */
+function gravar(){
+  try{localStorage.setItem(CHAVE, JSON.stringify({estudante,turma,iTela,respostas,tent,ajudaVista,saidasTC,trocasAba,
+    horaInicio:horaInicio?horaInicio.getTime():null}))}catch(e){}
+}
+function ler(){try{return JSON.parse(localStorage.getItem(CHAVE))}catch(e){return null}}
+
+/* ---------------- TELA CHEIA ---------------- */
+function estaTC(){return !!(document.fullscreenElement||document.webkitFullscreenElement)}
+function pedirTC(){const e=document.documentElement; (e.requestFullscreen||e.webkitRequestFullscreen||function(){}).call(e)}
+function registrarSaida(){
+  if(!horaInicio) return;
+  if(!estaTC() && !avisoAberto){
+    saidasTC++; avisoAberto=true;
+    document.getElementById("contTC").innerHTML=saidasTC+"<small>saída(s) registrada(s)</small>";
+    document.getElementById("avisoTC").classList.add("abre");
+    atualizarStatus(); gravar();
+  }
+}
+function voltarTelaCheia(){document.getElementById("avisoTC").classList.remove("abre");avisoAberto=false;pedirTC()}
+function ignorarTelaCheia(){document.getElementById("avisoTC").classList.remove("abre");avisoAberto=false}
+document.addEventListener("fullscreenchange",registrarSaida);
+document.addEventListener("visibilitychange",()=>{if(document.hidden&&horaInicio){trocasAba++;atualizarStatus();gravar()}});
+
+/* ---------------- GRIPO · destaque de termos ---------------- */
+function gripo(raiz, termos){
+  const chaves=termos.map(x=>x.t).filter(x=>x.length>=3);
+  if(!chaves.length) return;
+  const re=new RegExp("\\b("+chaves.map(c=>c.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|")+")\\b","gi");
+  (function anda(n){
+    for(let i=n.childNodes.length-1;i>=0;i--){
+      const f=n.childNodes[i];
+      if(f.nodeType===3){
+        if(re.test(f.nodeValue)){
+          const s=document.createElement("span");
+          s.innerHTML=f.nodeValue.replace(re,'<span class="gmark">$1</span>');
+          n.replaceChild(s,f);
+        }
+      } else if(f.nodeType===1 && !f.classList.contains("gmark") && f.tagName!=="BUTTON"){ anda(f) }
+    }
+  })(raiz);
+}
+
+/* ---------------- UI GERAL ---------------- */
+function atualizarStatus(){
+  document.getElementById("stNome").textContent="Estudante: "+(estudante||"—");
+  document.getElementById("stTurma").textContent="Turma: "+(turma||"—");
+  const r=roteiro[iTela];
+  const t=(r&&r.t==="perg")?(tent[idxPerg(r.q,r.d)]||0)+1:1;
+  document.getElementById("stTent").textContent="Tentativa "+Math.min(t,MAXT);
+  document.getElementById("stTela").textContent="Tela "+(iTela+1)+"/"+roteiro.length;
+  document.getElementById("stSaidas").textContent="⛶ Saídas: "+saidasTC;
+  document.getElementById("pagsel").textContent="tela "+(iTela+1)+" de "+roteiro.length;
+}
+function pintarTrilha(){
+  const t=document.getElementById("trilha"); if(!t) return;
+  let h="";
+  roteiro.forEach((r,i)=>{
+    if(r.t==="konv"){h+=`<span class="mk kon ${i===iTela?'aqui':''}"></span>`;return}
+    if(r.t!=="perg") return;
+    const k=idxPerg(r.q,r.d), rr=respostas[k];
+    let cls="mk"+(r.d===NDEG-1?" los":"");
+    if(i===iTela) cls+=" aqui";
+    else if(rr){cls+= rr.tent===1?" ok":(rr.certo?" tarde":" nao")}
+    h+=`<span class="${cls}"></span>`;
+  });
+  t.innerHTML=h;
+  const r=roteiro[iTela];
+  const nm={konv:"pausa de convivência",capa:"capa do degrau",perg:"pergunta",parcial:"placar parcial",final:"placar final"}[r.t];
+  document.getElementById("telacont").textContent="tela "+(iTela+1)+" · "+nm;
+}
+function render(){
+  const r=roteiro[iTela];
+  if(r.t==="konv") telaConv();
+  else if(r.t==="capa") telaCapa(r);
+  else if(r.t==="perg") telaPerg(r);
+  else if(r.t==="parcial") telaParcial();
+  else telaFinal();
+  document.getElementById("trilhabar").style.display="block";
+  pintarTrilha(); atualizarStatus(); gravar(); window.scrollTo(0,0);
+}
+function avancar(){ if(iTela<roteiro.length-1){iTela++; render()} }
+
+/* ---------------- ABERTURA ---------------- */
+function telaAbertura(){
+  document.getElementById("trilhabar").style.display="none";
+  const g=ler();
+  const retomar = g && g.estudante ? `<div class="contaregra"><b>Você já tinha começado.</b> Clique em Começar para continuar de onde parou, na tela ${(g.iTela||0)+1}.</div>` : "";
+  document.getElementById("palco").innerHTML=`
+  <div class="card abertura">
+    <h1>Revisão da 1ª AAIM · 3º bimestre</h1>
+    <h2>Tecnologia e Inovação · 6º ano · Unidade 01 · StartLab</h2>
+    ${retomar}
+    <div class="campo"><label for="inNome">Seu nome completo</label>
+      <input id="inNome" type="text" placeholder="Digite seu nome" autocomplete="off" value="${g&&g.estudante?g.estudante:""}"></div>
+    <div class="campo"><label>Sua turma</label>
+      <div class="turmabox"><span class="ano">6º ANO</span>
+        <div class="turmagrid">
+          <button type="button" class="turmabtn a" id="tA" onclick="escolherTurma('A')">A</button>
+          <button type="button" class="turmabtn b" id="tB" onclick="escolherTurma('B')">B</button>
+        </div></div></div>
+
+    <div class="regras"><ul>
+      <li>São <b>${BANCO.length} questões</b> da avaliação, e cada uma vira <b>${NDEG} perguntas</b>: ${totPerguntas()} no total.</li>
+      <li>Cada questão vira <b>ENTENDER</b>, <b>TESTAR</b> e <b>CONCLUIR</b>. O último degrau é a questão da avaliação, do jeito que ela é.</li>
+      <li>Você tem <b>até 4 tentativas</b> em cada pergunta.</li>
+      <li>A partir da <b>2ª tentativa</b> a ajuda abre, em pedaços curtos, com botão de próxima dica.</li>
+      <li>Na <b>4ª tentativa</b> a ajuda já vem aberta e você avança de qualquer jeito. Ninguém fica preso.</li>
+      <li>A cada 10 perguntas aparece um <b>placar parcial</b> com recado do professor.</li>
+      <li>A revisão abre em <b>tela cheia</b>. Sair da tela cheia é registrado.</li>
+    </ul></div>
+
+    <div class="contaregra">
+      <b>Como a nota é calculada:</b> conta só a <b>1ª tentativa</b> de cada pergunta.<br>
+      nota = (acertos de primeira − erros de primeira) ÷ ${totPerguntas()} × 10, e nunca fica abaixo de zero.<br>
+      Vale mais acertar poucas com atenção do que responder tudo depressa.
+    </div>
+
+    <button class="btn" onclick="comecar()">Começar a revisão</button>
+  </div>`;
+  if(turmaSel) escolherTurma(turmaSel);
+  atualizarStatus();
+}
+function escolherTurma(l){
+  turmaSel=l;
+  const a=document.getElementById("tA"), b=document.getElementById("tB");
+  if(a) a.classList.toggle("sel", l==="A");
+  if(b) b.classList.toggle("sel", l==="B");
+}
+function comecar(){
+  const n=document.getElementById("inNome").value.trim();
+  if(n.length<3){alert("Digite seu nome completo para continuar.");return}
+  if(!turmaSel){alert("Toque na sua turma: A ou B.");return}
+  estudante=n; turma="6º ano "+turmaSel;
+  const g=ler();
+  if(g && g.estudante===n){
+    respostas=g.respostas||[]; tent=g.tent||{}; ajudaVista=g.ajudaVista||{};
+    saidasTC=g.saidasTC||0; trocasAba=g.trocasAba||0; iTela=Math.min(g.iTela||0, roteiro.length-1);
+  } else { respostas=[]; tent={}; ajudaVista={}; iTela=0 }
+  horaInicio=new Date(); pedirTC(); render();
+}
+
+/* ---------------- CONVIVÊNCIA ---------------- */
+function telaConv(){
+  convOk=false;
+  document.getElementById("palco").innerHTML=`
+  <div class="card">
+    <div class="topo">
+      <span class="tag" style="background:var(--conv)">PAUSA DE CONVIVÊNCIA · ${KONV.cod}</span>
+      <span class="tag c">TELA ${iTela+1}/${roteiro.length}</span>
+      <span class="placar">não vale nota</span>
+    </div>
+    <div class="kcapa"><div class="kfig">${SVG_FONE}</div>
+      <div class="ktxt"><b>${KONV.titulo}</b><span>${KONV.linha}</span></div></div>
+    <div class="ktexto">${KONV.texto.map(p=>`<p>${p}</p>`).join("")}</div>
+    ${KONV.perguntas.map((q,qi)=>`
+      <div class="kq"><span class="kr">${q.rot}</span><div class="ke">${q.q}</div>
+        <div id="kop${qi}">${q.ops.map((o,oi)=>`<button class="kalt" onclick="respConv(${qi},${oi})">${o}</button>`).join("")}</div>
+        <div class="kexpl" id="kex${qi}"></div></div>`).join("")}
+    <div class="kacordo"><label><input type="checkbox" id="kok" onchange="liberaConv()">
+      <span>${KONV.acordo}</span></label>
+      <span class="dica">Marque para liberar o botão Avançar.</span></div>
+    <button class="btn conv" id="kbtn" disabled onclick="avancar()">Avançar</button>
+  </div>`;
+}
+function respConv(qi,oi){
+  const q=KONV.perguntas[qi], cont=document.getElementById("kop"+qi);
+  if(cont.dataset.feito) return; cont.dataset.feito="1";
+  Array.from(cont.children).forEach((b,i)=>{b.disabled=true;
+    if(i===q.c) b.classList.add("certa"); else if(i===oi) b.classList.add("errada")});
+  const ex=document.getElementById("kex"+qi);
+  ex.className="kexpl mostra"; ex.innerHTML=q.expl+`<span class="lei">${q.lei}</span>`;
+}
+function liberaConv(){
+  const c=document.getElementById("kok"), b=document.getElementById("kbtn");
+  convOk=!!(c&&c.checked); if(b) b.disabled=!convOk;
+}
+
+/* ---------------- CAPA DO DEGRAU ---------------- */
+function telaCapa(r){
+  const q=BANCO[r.q];
+  const usados=q.degraus.map(d=>d.b);
+  const esc=Object.keys(BLOOM_COR).map((b,i)=>{
+    const fora=usados.indexOf(b)<0;
+    return `<div class="degrau ${fora?'fora':'futuro'}" style="background:${BLOOM_COR[b]};height:${34+i*11}px">${b}</div>`;
+  }).join("");
+  document.getElementById("palco").innerHTML=`
+  <div class="card capa">
+    <div class="nivelnum">QUESTÃO ${r.q+1} DE ${BANCO.length}</div>
+    <h2>${q.persona}</h2>
+    <p style="font-size:16px;color:var(--cinza);font-weight:700">Esta questão da avaliação vira ${NDEG} perguntas. Você sobe um degrau de cada vez.</p>
+    <div class="escada">${esc}</div>
+    <div class="escada-legenda">Os dois primeiros degraus, LOCALIZAR e IDENTIFICAR, ficam apagados: eles já foram feitos em aula.<br>Aqui você sobe ENTENDER · TESTAR · CONCLUIR.</div>
+    <button class="btn" onclick="avancar()">Ler o código e começar</button>
+  </div>`;
+}
+
+/* ---------------- PERGUNTA ---------------- */
+function parDaTentativa(d,t){
+  const i=Math.min(t,3);
+  return {c:d.cor[i%d.cor.length], e:d.err[i%d.err.length]};
+}
+function telaPerg(r){
+  const q=BANCO[r.q], d=q.degraus[r.d], k=idxPerg(r.q,r.d);
+  const t=tent[k]||0, ehB5=(d.b==="B5");
+  const cor=BLOOM_COR[d.b];
+  let altsHTML, pergTxt;
+  if(ehB5){
+    pergTxt=q.oficial.q;
+    altsHTML=q.oficial.alts.map((a,i)=>`<button class="alt" onclick="marcarB5(${i})">${a}</button>`).join("");
+  } else {
+    pergTxt=d.perg;
+    const p=parDaTentativa(d,t);
+    const ordem = (t%2===0) ? [[p.c,1],[p.e,0]] : [[p.e,0],[p.c,1]];
+    altsHTML=ordem.map(([txt,ok])=>`<button class="alt" onclick="marcar(${ok})">${txt}</button>`).join("");
+  }
+  document.getElementById("palco").innerHTML=`
+  <div class="card">
+    <div class="topo">
+      <span class="tag" style="background:${cor}">${d.b} · ${BLOOM_NOME[d.b]}</span>
+      <span class="tag c">TELA ${iTela+1}/${roteiro.length}</span>
+      <span class="placar">pergunta ${k+1} de ${totPerguntas()}</span>
+    </div>
+
+    <div class="cverde">
+      <h3>${q.persona}</h3>
+      ${q.contexto.map(p=>`<p>${p}</p>`).join("")}
+      ${q.codigo}
+      <div class="gchips" id="chips">${q.glossario.map((g,i)=>`<button class="gchip" onclick="abrirG(${r.q},${i})">📖 ${g.t}</button>`).join("")}</div>
+    </div>
+
+    ${ehB5?`<div class="croxo"><span class="rot">QUESTÃO DA AVALIAÇÃO · TEXTO INTEGRAL</span><p>${pergTxt}</p></div>`:""}
+
+    ${(!ehB5 && d.b==="B4")?`<div class="balao"><span class="quem">${q.colega.nome} DISSE:</span>${q.colega.fala}</div>
+      <div class="cazul"><b>Atenção ao ponto de vista.</b> A pergunta é sobre a fala do ${q.colega.nome}, não sobre o código sozinho.</div>`:""}
+
+    <div class="claranja"><b>Dica de leitura:</b> ${ehB5?d.dicaB5:q.dica}</div>
+
+    <div class="selobloom">
+      <span class="bol" style="background:${cor}"></span>
+      <span class="nm" style="color:${cor}">${d.b} · ${BLOOM_NOME[d.b]}</span>
+      <span class="dg">${BLOOM_SUB[d.b]} · degrau ${r.d+1} de ${NDEG}</span>
+    </div>
+
+    ${ehB5?"":`<div class="perg">${pergTxt}</div>`}
+    <div id="alts">${altsHTML}</div>
+
+    <div class="fb" id="fb"></div>
+    <div class="ajuda" id="ajuda">
+      <span class="quem">O BIT · SEU AJUDANTE</span>
+      <div class="trilhas">
+        <button class="tchip on" onclick="trocaTrilha(0)">revisar a aula</button>
+        <button class="tchip" onclick="trocaTrilha(1)">o que preciso dominar</button>
+        <button class="tchip" onclick="trocaTrilha(2)">comparação e analogia</button>
+      </div>
+      <div class="fatiapos" id="fatiapos"></div>
+      <div class="fatia" id="fatia"></div>
+      <button class="bprox" id="bfat" onclick="proxFatia()">próxima dica</button>
+    </div>
+
+    <button class="btn" id="bAvanca" style="display:none" onclick="avancar()">Avançar</button>
+  </div>`;
+  gripo(document.querySelector(".cverde"), q.glossario);
+  if(t>=1 && !ehB5) abrirAjuda(t>=MAXT-1);
+  if(respostas[k]) revelarJaFeito(k);
+}
+function abrirAjuda(pronta){
+  trilhaAtual=0; fatiaAtual=0;
+  document.getElementById("ajuda").classList.add("abre");
+  mostrarFatia();
+  if(pronta){
+    const r=roteiro[iTela], d=BANCO[r.q].degraus[r.d];
+    fatiaAtual=d.ajuda[0].length-1; mostrarFatia();
+  }
+}
+function trocaTrilha(i){
+  trilhaAtual=i; fatiaAtual=0;
+  document.querySelectorAll(".tchip").forEach((c,j)=>c.classList.toggle("on",j===i));
+  mostrarFatia();
+}
+function mostrarFatia(){
+  const r=roteiro[iTela], d=BANCO[r.q].degraus[r.d];
+  const tr=d.ajuda[trilhaAtual];
+  document.getElementById("fatia").textContent=tr[fatiaAtual];
+  document.getElementById("fatiapos").textContent="parte "+(fatiaAtual+1)+" de "+tr.length;
+  const b=document.getElementById("bfat");
+  b.disabled = fatiaAtual>=tr.length-1;
+  b.textContent = b.disabled ? "fim desta trilha" : "próxima dica";
+  const k=idxPerg(r.q,r.d);
+  if(b.disabled){ ajudaVista[k]=true; gravar() }
+}
+function proxFatia(){
+  const r=roteiro[iTela], d=BANCO[r.q].degraus[r.d];
+  if(fatiaAtual < d.ajuda[trilhaAtual].length-1){ fatiaAtual++; mostrarFatia() }
+}
+function marcar(ok){
+  const r=roteiro[iTela], k=idxPerg(r.q,r.d);
+  const t=(tent[k]||0)+1; tent[k]=t;
+  const btns=document.querySelectorAll("#alts .alt");
+  const fb=document.getElementById("fb");
+  if(ok){
+    btns.forEach(b=>b.disabled=true);
+    document.querySelectorAll("#alts .alt").forEach((b,i)=>{
+      if(b.getAttribute("onclick").indexOf("marcar(1)")>=0) b.classList.add("certa"); else b.classList.add("errada")});
+    respostas[k]={certo:true, tent:t}; 
+    fb.className="fb mostra bom";
+    fb.innerHTML="<b>Correto.</b>"+(t===1?"Acertou de primeira. Essa é a que conta na nota.":"Acertou na tentativa "+t+". Vale para a nota de recuperação.");
+    document.getElementById("bAvanca").style.display="block";
+    document.getElementById("ajuda").classList.remove("abre");
+  } else {
+    if(t>=MAXT){
+      btns.forEach(b=>b.disabled=true);
+      respostas[k]={certo:false, tent:t};
+      fb.className="fb mostra ruim";
+      fb.innerHTML="<b>Não foi dessa vez.</b>Você usou as 4 tentativas. A ajuda ficou aberta e você avança agora. Ninguém fica preso num degrau.";
+      abrirAjuda(true);
+      document.getElementById("bAvanca").style.display="block";
+    } else {
+      fb.className="fb mostra ruim";
+      fb.innerHTML="<b>Ainda não.</b>Tentativa "+t+" de 4. As alternativas mudaram. Leia a ajuda antes de tentar de novo.";
+      abrirAjuda(t>=MAXT-1);
+      setTimeout(()=>{render()}, 1400);
+      return;
+    }
+  }
+  gravar(); pintarTrilha(); atualizarStatus();
+}
+function marcarB5(i){
+  const r=roteiro[iTela], q=BANCO[r.q], k=idxPerg(r.q,r.d);
+  const t=(tent[k]||0)+1; tent[k]=t;
+  const ok = (i===q.oficial.certa);
+  const btns=document.querySelectorAll("#alts .alt");
+  const fb=document.getElementById("fb");
+  if(ok || t>=MAXT){
+    btns.forEach((b,j)=>{b.disabled=true;
+      if(j===q.oficial.certa) b.classList.add("certa"); else if(j===i&&!ok) b.classList.add("errada")});
+    respostas[k]={certo:ok, tent:t};
+    fb.className="fb mostra "+(ok?"bom":"ruim");
+    fb.innerHTML = ok
+      ? "<b>Correto.</b>Esta é a resposta da questão na avaliação. Guarde o raciocínio, não a letra: na avaliação as alternativas aparecem embaralhadas."
+      : "<b>Não foi dessa vez.</b>A alternativa certa está marcada em verde. Leia o texto dela, não a posição.";
+    document.getElementById("bAvanca").style.display="block";
+  } else {
+    btns[i].classList.add("errada"); btns[i].disabled=true;
+    fb.className="fb mostra ruim";
+    fb.innerHTML="<b>Ainda não.</b>Tentativa "+t+" de 4. Volte ao código antes de escolher outra.";
+  }
+  gravar(); pintarTrilha(); atualizarStatus();
+}
+function revelarJaFeito(k){
+  document.querySelectorAll("#alts .alt").forEach(b=>b.disabled=true);
+  const fb=document.getElementById("fb");
+  fb.className="fb mostra "+(respostas[k].certo?"bom":"ruim");
+  fb.innerHTML="<b>Você já respondeu esta pergunta.</b>Voltar não muda a nota.";
+  document.getElementById("bAvanca").style.display="block";
+}
+
+/* ---------------- GLOSSÁRIO ---------------- */
+function abrirG(qi,gi){
+  const g=BANCO[qi].glossario[gi];
+  document.getElementById("caixaG").innerHTML=`<h3>📖 ${g.t}</h3><p>${g.d}</p>
+    <button class="btn" onclick="fecharModal()">Fechar</button>`;
+  document.getElementById("modalG").classList.add("abre");
+}
+function fecharModal(){document.getElementById("modalG").classList.remove("abre")}
+
+/* ---------------- NOTAS ---------------- */
+function notas(){
+  const tot=totPerguntas();
+  let ac1=0, er1=0, acQualquer=0;
+  for(let k=0;k<tot;k++){
+    const r=respostas[k]; if(!r) continue;
+    if(r.certo) acQualquer++;
+    if(r.tent===1){ r.certo?ac1++:er1++ } else if(r.certo===false && r.tent>=MAXT){ er1++ } else if(!r.certo){ er1++ } else { }
+  }
+  const feitas=respostas.filter(Boolean).length;
+  const nota=Math.max(0,(ac1-er1)/tot*10);
+  const notaRec=acQualquer/tot*10;
+  return {ac1,er1,acQualquer,feitas,tot,nota,notaRec};
+}
+function pontosHTML(n){
+  return `<div class="pontos">
+    <div class="pt acerto"><div class="n">${n.ac1}</div><div class="r">ACERTOS DE PRIMEIRA</div></div>
+    <div class="pt tempo"><div class="n">${n.acQualquer-n.ac1}</div><div class="r">ACERTOS APÓS TENTAR</div></div>
+    <div class="pt total"><div class="n">${n.nota.toFixed(1).replace(".",",")}</div><div class="r">NOTA ATÉ AQUI</div></div></div>`;
+}
+function falaHTML(pct){
+  const g=pct>=70?"alto":(pct>=50?"medio":"baixo");
+  const t=FALAS[g][Math.floor(Math.random()*FALAS[g].length)];
+  return `<div class="falaprof"><span class="quem">RECADO DO PROFESSOR MARCOS</span><span class="txt">“${t}”</span></div>`;
+}
+function focoHTML(){
+  const min=horaInicio?Math.max(1,Math.round((Date.now()-horaInicio.getTime())/60000)):0;
+  const limpo=(saidasTC===0&&trocasAba===0);
+  return `<div style="background:${limpo?'#E3F5DE':'#FCE4E8'};border-left:6px solid ${limpo?'var(--ok)':'var(--erro)'};
+    border-radius:0 12px 12px 0;padding:12px 15px;text-align:left;margin-bottom:14px;font-size:16px">
+    <b style="display:block;color:var(--roxo);margin-bottom:5px">REGISTRO DE FOCO</b>
+    Duração até aqui: <b>${min} min</b> · telas percorridas: <b>${iTela+1}</b><br>
+    Saídas da tela cheia: <b>${saidasTC}</b> · trocas de aba: <b>${trocasAba}</b></div>`;
+}
+
+/* ---------------- PLACAR PARCIAL ---------------- */
+function telaParcial(){
+  const n=notas();
+  const pct=n.feitas?Math.round(n.ac1/n.feitas*100):0;
+  document.getElementById("palco").innerHTML=`
+  <div class="card final">
+    <div style="display:inline-block;background:var(--verde-esc);color:#fff;font-size:15px;font-weight:800;
+      padding:6px 16px;border-radius:20px;letter-spacing:1px;margin-bottom:12px">PLACAR PARCIAL · TELA ${iTela+1} DE ${roteiro.length}</div>
+    <h2>${n.feitas} de ${n.tot} perguntas respondidas</h2>
+    <div class="faixa" style="color:var(--verde-esc)">${n.ac1} acertos de primeira · ${pct}% até aqui</div>
+    ${pontosHTML(n)}
+    ${falaHTML(pct)}
+    ${focoHTML()}
+    <div class="regratent ${n.nota>=9?'livre':'refaz'}">
+      <b>DE OLHO NA PREMIAÇÃO</b>
+      A premiação parcial sai com nota <b>9,00 ou mais</b>, contando só os acertos de primeira.
+      Você está em <b>${n.nota.toFixed(2).replace(".",",")}</b>.</div>
+    <button class="btn" onclick="avancar()">Continuar a revisão</button>
+  </div>`;
+}
+
+/* ---------------- PLACAR FINAL ---------------- */
+function telaFinal(){
+  const n=notas();
+  const pct=Math.round(n.ac1/n.tot*100);
+  let faixa,cor;
+  if(n.nota>=9){faixa="Excelente. Você chega na avaliação com o conteúdo dominado.";cor="var(--ok)"}
+  else if(n.nota>=7){faixa="Muito bom. Reveja só os degraus com menos acerto.";cor="var(--verde-esc)"}
+  else if(n.nota>=5){faixa="Você está no caminho. Volte ao código das questões que errou.";cor="var(--alerta)"}
+  else{faixa="Refaça a revisão com calma antes da avaliação.";cor="var(--erro)"}
+
+  const porDegrau=Object.keys(BLOOM_COR).map(b=>{
+    let ac=0,to=0;
+    BANCO.forEach((q,qi)=>q.degraus.forEach((d,di)=>{
+      if(d.b===b){to++; const r=respostas[idxPerg(qi,di)]; if(r&&r.certo&&r.tent===1) ac++}}));
+    return `<tr><td><b>${b} · ${BLOOM_NOME[b]}</b><br><span style="font-size:15px;color:var(--cinza)">${BLOOM_SUB[b]}</span></td>
+      <td class="p ${ac===to?'ok':(ac===0?'no':'')}">${ac}/${to}</td></tr>`;
+  }).join("");
+
+  const p1 = n.nota>=9, p2 = n.notaRec>=7.5;
+  document.getElementById("palco").innerHTML=`
+  <div class="card final">
+    <h2>Revisão concluída</h2>
+    <div style="font-size:16px;color:var(--cinza);font-weight:700">${estudante} · ${turma}</div>
+    <div class="faixa" style="color:${cor};margin-top:12px">${n.ac1} de ${n.tot} de primeira · nota ${n.nota.toFixed(2).replace(".",",")} — ${faixa}</div>
+    ${pontosHTML(n)}
+    <div class="premio"><b>🍬 SUA PREMIAÇÃO</b>
+      Premiação parcial · nota <b>9,00 ou mais</b> só com acertos de primeira: você fez <b>${n.nota.toFixed(2).replace(".",",")}</b> — ${p1?"<b>conquistada</b>":"não saiu desta vez"}.<br>
+      Premiação do final · <b>7,50 ou mais</b> somando os acertos em até 4 tentativas: você fez <b>${n.notaRec.toFixed(2).replace(".",",")}</b> — ${p2?"<b>conquistada</b>":"não saiu desta vez"}.<br>
+      Mostre esta tela ao professor Marcos para receber.</div>
+    <div class="regratent livre"><b>VOCÊ TERMINOU TODOS OS DEGRAUS</b>
+      Nenhuma pergunta ficou para trás. Onde as 4 tentativas acabaram, a ajuda apareceu e você avançou.</div>
+    ${falaHTML(pct)}
+    ${focoHTML()}
+    <table class="tabela"><tr><th>Degrau</th><th style="text-align:center">De primeira</th></tr>${porDegrau}</table>
+    <button class="btn sec" onclick="if(confirm('Isso apaga o seu progresso neste aparelho. Continuar?')){localStorage.removeItem(CHAVE);location.reload()}">Refazer a revisão do zero</button>
+  </div>`;
+}
+
+/* ---------------- ARRANQUE ---------------- */
+montarRoteiro();
+telaAbertura();
+</script>
+</body>
+</html>
